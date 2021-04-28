@@ -10,10 +10,10 @@ best_beta(data)
 \item{data}{vector of data points}
 }
 \value{
-a number
+best penalty value
 }
 \description{
-Best parameter for penality
+Best parameter for penalty
 }
 \examples{
 best_beta(c(0,1,1,2,2,3))

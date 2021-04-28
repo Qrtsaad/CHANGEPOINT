@@ -4,17 +4,17 @@
 \alias{cost_gauss}
 \title{Cost Gauss}
 \usage{
-cost_gauss(trajectoire)
+cost_gauss(v)
 }
 \arguments{
-\item{trajectoire}{vector of trajectoire from data points}
+\item{v}{vector of data points}
 }
 \value{
-a number
+the optimal cost value
 }
 \description{
 Cost function for Gaussian models
 }
 \examples{
-cost_gauss(c(0,0,1,1,2,2,3,4,5))
+cost_gauss(c(0,0,1,1))
 }

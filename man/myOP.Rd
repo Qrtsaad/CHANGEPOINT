@@ -9,9 +9,9 @@ myOP(data, cost = "gauss", beta = best_beta(data))
 \arguments{
 \item{data}{vector of data points}
 
-\item{cost}{a number}
+\item{cost}{type of my cost (gauss or poisson)}
 
-\item{beta}{a number}
+\item{beta}{penalty value}
 }
 \value{
 a vector of changepoints, a number for the complexity (cost of computations)
@@ -20,6 +20,6 @@ a vector of changepoints, a number for the complexity (cost of computations)
 Optimal Partitioning Algorithm
 }
 \examples{
-myOP(c(0,0,1,1,0,0,0), beta = 0.1)
+myOP(c(0,0,1,1,0,0,0), beta = 0.00001)
 myOP(c(rnorm(50, mean = 0, sd = 0), rnorm(50, mean = 10, sd = 0)))
 }

@@ -4,18 +4,19 @@
 \alias{cost_poiss}
 \title{Cost Poisson}
 \usage{
-cost_poiss(trajectoire)
+cost_poiss(v)
 }
 \arguments{
-\item{trajectoire}{vector of trajectoire from data points}
+\item{v}{vector of data points}
 }
 \value{
-a number
+the optimal cost value
 }
 \description{
 Cost function for Poisson models
 }
 \examples{
-cost_poiss(c(1,2,3))
+cost_poiss(c(0,0,0))
+cost_poiss(c(1,1,1))
 cost_poiss(c(1,1,1,2,2,2))
 }

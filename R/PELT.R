@@ -43,17 +43,19 @@ myPELT <- function(data, cost = "gauss", beta = best_beta(data))
         arg_min <- s - 1
       }
     }
+
     Q[t] <- val_min
     cp[t] <- arg_min
+
     for (s in R){
       #     print(s)
       #     print(t)
       #     print(Q[s] + cost_f(data[(s+1):t]))
-      if (Q[t] <= Q[s] + cost_f(data[s:t])){
+      if (Q[t] <= Q[s-1] + cost_f(data[s:t])){
         R <- R[R!= s]}}
   }
 
-
+#backtracking
   v <- cp[n]
   P <- cp[n]
 

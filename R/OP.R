@@ -4,19 +4,22 @@
 #' @description Optimal Partitioning Algorithm
 #'
 #' @param data vector of data points
-#' @param cost a number
-#' @param beta a number
+#' @param cost type of my cost (gauss or poisson)
+#' @param beta penalty value
 #'
 #' @return a vector of changepoints, a number for the complexity (cost of computations)
 #' @export
 #'
 #' @examples
-#' myOP(c(0,0,1,1,0,0,0), beta = 0.1)
+#' myOP(c(0,0,1,1,0,0,0), beta = 0.00001)
 #' myOP(c(rnorm(50, mean = 0, sd = 0), rnorm(50, mean = 10, sd = 0)))
-myOP <- function(data, cost = "gauss", beta = best_beta(data)) {
+myOP <- function(data, cost = "gauss", beta = best_beta(data))
+{
+  allowed.cost <- c("gauss", "poisson")
+  if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
 
-  if (cost == "gauss") {cost <- cost_gauss}
-  else if (cost == "poisson") {cost <- cost_poiss}
+  if (cost == "gauss") {cost_f <- cost_gauss}
+  else if (cost == "poisson") {cost_f <- cost_poiss}
 
   n <- length(data)
 
@@ -40,7 +43,7 @@ myOP <- function(data, cost = "gauss", beta = best_beta(data)) {
     cp[t] <- arg_min
   }
 
-
+# backtracking
   v <- cp[n]
   P <- cp[n]
 
@@ -51,6 +54,6 @@ myOP <- function(data, cost = "gauss", beta = best_beta(data)) {
   }
   P <- rev(P)[-1]
 
-  return(list(changepoints = P, globalCost = Q[n] - length(P)*beta))
+  return(list(changepoints = P, means = NULL, globalCost = Q[n] - length(P)*beta))
 }
 

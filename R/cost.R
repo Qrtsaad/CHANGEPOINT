@@ -3,16 +3,17 @@
 #'
 #' @description Cost function for Gaussian models
 #'
-#' @param trajectoire vector of trajectoire from data points
+#' @param v vector of data points
 #'
-#' @return a number
+#' @return the optimal cost value
 #' @export
 #'
 #' @examples
-#' cost_gauss(c(0,0,1,1,2,2,3,4,5))
-cost_gauss <- function(trajectoire) {
-  n = length(trajectoire)
-  if (n == 1) {res = 0} else {res = (n-1)*var(trajectoire)}
+#' cost_gauss(c(0,0,1,1))
+cost_gauss <- function(v)
+{
+  n <- length(v)
+  if (n == 1) {res <- 0} else {res <- (n-1)*var(v)}
   return (res)
 }
 
@@ -21,20 +22,22 @@ cost_gauss <- function(trajectoire) {
 #'
 #' @description Cost function for Poisson models
 #'
-#' @param trajectoire vector of trajectoire from data points
+#' @param v vector of data points
 #'
-#' @return a number
+#' @return the optimal cost value
 #' @export
 #'
 #' @examples
-#' cost_poiss(c(1,2,3))
+#' cost_poiss(c(0,0,0))
+#' cost_poiss(c(1,1,1))
 #' cost_poiss(c(1,1,1,2,2,2))
-cost_poiss <- function(trajectoire) {
-  n <- length(trajectoire)
-  moy <- mean(trajectoire)
-  slogfact <- sum(log(factorial(trajectoire)))
-  return (2*n*(moy - log(moy)*moy + slogfact))
-
+cost_poiss <- function(v)
+{
+  n <- length(v)
+  moy <- mean(v)
+  slogfact <- sum(log(factorial(v)))
+  if (moy == 0){res <- 0} else {res <- n*moy*(1 - log(moy)) + slogfact}
+  return (res)
 }
 
 
