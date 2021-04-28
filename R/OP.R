@@ -28,11 +28,11 @@ myOP <- function(data, cost = "gauss", beta = best_beta(data))
 
   for (t in 2:n)
   {
-    val_min <- cost(data[1:t])
+    val_min <- cost_f(data[1:t])
     arg_min <- 0
     for (s in 2:t)
     {
-      a <- Q[s-1] + cost(data[s:t]) + beta
+      a <- Q[s-1] + cost_f(data[s:t]) + beta
       if (a < val_min)
       {
         val_min <- a
