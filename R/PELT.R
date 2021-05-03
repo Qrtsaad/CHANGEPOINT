@@ -66,6 +66,6 @@ myPELT <- function(data, cost = "gauss", beta = best_beta(data))
   }
   P <- rev(P)[-1]
 
-  return(list(changepoints = P, globalCost = Q[n] - length(P)*beta))
+  return(list(changepoints = P, mean = NULL, globalCost = Q[n] - length(P)*beta))
 }
 
