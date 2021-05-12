@@ -3,7 +3,7 @@ Type: Package
 Title: Methods for changepoint detection
 Version: 0.1.0
 Author: Saâd Qriouet
-Maintainer: The package maintainer <qriouetsaad@gmail.com>
+Maintainer: Saâd Qriouet <qriouetsaad@gmail.com>
 Description: Implementation of differents method for changepoint detection. 
     Methods implemented : OP and PELT.
 License: GPL-3
