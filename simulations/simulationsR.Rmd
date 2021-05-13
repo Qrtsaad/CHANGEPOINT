@@ -27,7 +27,6 @@ cores
 #### Initialisation de la séquence
 
 ```{r}
-#rep <- replicate(1, seq(100,1000,50))
 seq <- seq(100,1000,100)
 ```
 
