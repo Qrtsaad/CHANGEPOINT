@@ -14,6 +14,8 @@
 #' @examples
 #' myPELT(c(0,0,1,1,0,0,0), beta = 0.00001)
 #' myPELT(c(rnorm(50, mean = 0, sd = 0), rnorm(50, mean = 10, sd = 0)), beta = 1)
+#' myPELT(data_generator(25, chpts = c(10,20), means = c(20,0,20), type = "gauss"), beta = 5)
+
 myPELT <- function(data, cost = "gauss", beta = best_beta(data))
 {
   allowed.cost <- c("gauss", "poisson")
