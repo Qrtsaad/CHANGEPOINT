@@ -35,7 +35,7 @@ seq <- seq(100,1000,100)
 ## 1. Sans changepoint : 
 
 ### 1.a) Gaussien
-```{r, include=FALSE}
+```{r}
 
 resOPg <- NULL
 resPELTg <- NULL
@@ -77,7 +77,7 @@ xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Ga
 
 
 ### 1.b) Poisson
-```{r, include=FALSE}
+```{r}
 resOPp <- NULL
 resPELTp <- NULL
 
@@ -152,7 +152,7 @@ make_means <- function(n)
 
 
 ### 2.a) Gaussien
-```{r, include=FALSE}
+```{r}
 
 reschgtOPg <- NULL
 reschgtPELTg <- NULL
@@ -193,7 +193,7 @@ xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Ga
   
 
 ### 2.b) Poisson
-```{r, include=FALSE}
+```{r}
 
 reschgtOPp <- NULL
 reschgtPELTp <- NULL
