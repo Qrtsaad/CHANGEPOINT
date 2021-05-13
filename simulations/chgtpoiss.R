@@ -4,6 +4,7 @@ library(CHANGEPOINT)
 library("parallel")
 library(ggplot2)
 
+
 ##
 cores <- detectCores()
 cores
@@ -88,4 +89,13 @@ ggplot(dfb, aes(log(seq))) + # basic graphical object
   geom_line(aes(y=log(reschgtPELT2)), colour="red") + # second layer
   ylab("log(Time)") +
   xlab("log(n)")
+
+
+
+
+library(lattice)
+n <- seq
+OP <- reschgtOP2
+PELT <- reschgtPELT2
+xyplot(OP + PELT ~ n, ylab = "Time", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
 
