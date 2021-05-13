@@ -37,21 +37,14 @@ resPELT2
 
 
 #### Plot des graphes
-## First plot
-df <- data.frame(seq,resOP2,resPELT2)
+n <- seq
+OP <- resOPp
+PELT <- resPELTp
 
-ggplot(df, aes(seq)) + # basic graphical object
-  geom_line(aes(y=resOP2), colour="blue") +  # first layer
-  geom_line(aes(y=resPELT2), colour="red") + # second layer
-  ylab("Time") +
-  xlab("n")
+
+## First plot
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Poisson model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
 
 ## Second plot
-dfb <- data.frame(log(seq),log(resOP2),log(resPELT2))
-
-ggplot(dfb, aes(log(seq))) + # basic graphical object
-  geom_line(aes(y=log(resOP2)), colour="blue") +  # first layer
-  geom_line(aes(y=log(resPELT2)), colour="red") + # second layer
-  ylab("log(Time)") +
-  xlab("log(n)")
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Poisson model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
 

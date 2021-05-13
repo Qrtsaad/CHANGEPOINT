@@ -3,6 +3,7 @@ devtools::install_github("Qrtsaad/CHANGEPOINT", force = TRUE)
 library(CHANGEPOINT)
 library("parallel")
 library(ggplot2)
+library(lattice)
 
 
 ##
@@ -72,30 +73,12 @@ reschgtPELT2
 
 
 #### Plot des graphes
+n <- seq
+OP <- reschgtOPp
+PELT <- reschgtPELTp
 ## First plot
-df <- data.frame(seq,reschgtOP2,reschgtPELT2)
-
-ggplot(df, aes(seq)) + # basic graphical object
-  geom_line(aes(y=reschgtOP2), colour="blue") +  # first layer
-  geom_line(aes(y=reschgtPELT2), colour="red") + # second layer
-  ylab("Time") +
-  xlab("n")
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Poisson model with changepoints", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
 
 ## Second plot
-dfb <- data.frame(log(seq),log(reschgtOP2),log(reschgtPELT2))
-
-ggplot(dfb, aes(log(seq))) + # basic graphical object
-  geom_line(aes(y=log(reschgtOP2)), colour="blue") +  # first layer
-  geom_line(aes(y=log(reschgtPELT2)), colour="red") + # second layer
-  ylab("log(Time)") +
-  xlab("log(n)")
-
-
-
-
-library(lattice)
-n <- seq
-OP <- reschgtOP2
-PELT <- reschgtPELT2
-xyplot(OP + PELT ~ n, ylab = "Time", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Poisson model with changepoints", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
 

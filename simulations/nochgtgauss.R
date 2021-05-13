@@ -37,21 +37,12 @@ resPELT1
 
 
 #### Plot des graphes
-## First plot
-df <- data.frame(seq,resOP1,resPELT1)
+n <- seq
+OP <- resOPg
+PELT <- resPELTg
 
-ggplot(df, aes(seq)) + # basic graphical object
-  geom_line(aes(y=resOP1), colour="blue") +  # first layer
-  geom_line(aes(y=resPELT1), colour="red") + # second layer
-  ylab("Time") +
-  xlab("n")
+## First plot
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Gaussian model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
 
 ## Second plot
-dfb <- data.frame(log(seq),log(resOP1),log(resPELT1))
-
-ggplot(dfb, aes(log(seq))) + # basic graphical object
-  geom_line(aes(y=log(resOP1)), colour="blue") +  # first layer
-  geom_line(aes(y=log(resPELT1)), colour="red") + # second layer
-  ylab("log(Time)") +
-  xlab("log(n)")
-
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Gaussian model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
