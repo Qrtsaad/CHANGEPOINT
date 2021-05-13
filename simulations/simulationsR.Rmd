@@ -1,0 +1,237 @@
+---
+title: "Simulations R"
+author: "Saâd Qriouet "
+date: "05/04/2021"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+
+
+
+
+```{r}
+devtools::install_github("Qrtsaad/CHANGEPOINT", force = TRUE)
+library(CHANGEPOINT)
+library("parallel")
+library(ggplot2)
+library(lattice)
+```
+
+```{r}
+cores <- detectCores()
+cores
+```
+
+#### Initialisation de la séquence
+
+```{r}
+#rep <- replicate(1, seq(100,1000,50))
+seq <- seq(100,1000,100)
+```
+
+
+## 1. Sans changepoint : 
+
+### 1.a) Gaussien
+```{r, include=FALSE}
+
+resOPg <- NULL
+resPELTg <- NULL
+
+for(i in seq)
+{
+  print(i)
+  data <- data_generator(n = i, type = "gauss")
+  plot(data)
+  tOP <- system.time(myOP(data, cost = "gauss"))[3]
+  print(tOP)
+  resOPg <- c(resOPg, tOP)
+  tPELT <- system.time(myPELT(data, cost = "gauss"))[3]
+  print(tPELT)
+  resPELTg <- c(resPELTg, tPELT)
+}
+
+```
+
+```{r}
+seq
+resOPg
+resPELTg
+```
+
+
+
+```{r}
+n <- seq
+OP <- resOPg
+PELT <- resPELTg
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Gaussian model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Gaussian model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+  
+```
+
+
+
+
+### 1.b) Poisson
+```{r, include=FALSE}
+resOPp <- NULL
+resPELTp <- NULL
+
+for(i in seq)
+{
+  print(i)
+  data <- data_generator(n = i, type = "poisson" )
+  plot(data)
+  tOP <- system.time(myOP(data, cost = "poisson"))[3]
+  print(tOP)
+  resOPp <- c(resOPp, tOP)
+  tPELT <- system.time(myPELT(data, cost = "poisson"))[3]
+  print(tPELT)
+  resPELTp <- c(resPELTp, tPELT)
+}
+
+```
+
+```{r}
+seq
+resOPp
+resPELTp
+```
+
+```{r}
+
+n <- seq
+OP <- resOPp
+PELT <- resPELTp
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Poisson model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Poisson model without changepoint", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+
+```
+
+
+
+## 2. Avec changepoint : 
+
+```{r}
+
+### FUNCTIONS TO CREATE VECTORS FOR DATA_GENERATOR PARAMS
+
+
+make_chpts <- function(n)
+{
+  if (n<0){stop('n must be non-negative')}
+  else if (n <= 100){res <- seq(from = 0, to = n-1, by = n/2)}
+  else if (n <= 200){res <- seq(from = 0, to = n-1, by = n/4)}
+  else if (n <= 500){res <- seq(from = 0, to = n-1, by = n/5)}
+  else if (n <= 1000){res <- seq(from = 0, to = n-1, by = n/10)}
+  else {res <- seq(from = 0, to = n-1, by = n/20)}
+  return (res)
+}
+
+make_means <- function(n)
+{
+  res <- NULL
+  tmp <- 0
+  for (i in 1:(n+1)){
+    rand <- sample(0:10, 1)
+    while (rand == tmp){rand <- sample(1:10, 1)}
+    tmp <- rand
+    res <- c(res,rand)
+  }
+  return (res)
+}
+
+
+```
+
+
+
+### 2.a) Gaussien
+```{r, include=FALSE}
+
+reschgtOPg <- NULL
+reschgtPELTg <- NULL
+
+for(i in seq)
+{
+  print(i)
+  chgt <- make_chpts(i)
+  print(chgt)
+  moys <- make_means(length(chgt))
+  data <- data_generator(n = i, chpts = chgt, means = moys, type = "gauss")
+  plot(data)
+  tOP <- system.time(myOP(data, cost = "gauss"))[3]
+  print(tOP)
+  reschgtOPg <- c(reschgtOPg, tOP)
+  tPELT <- system.time(myPELT(data, cost = "gauss"))[3]
+  print(tPELT)
+  reschgtPELTg <- c(reschgtPELTg, tPELT)
+}
+
+```
+
+```{r}
+seq
+reschgtOPg
+reschgtPELTg
+```
+
+
+```{r}
+n <- seq
+OP <- reschgtOPg
+PELT <- reschgtPELTg
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Gaussian model with changepoints", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Gaussian model with changepoints", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+```
+  
+
+### 2.b) Poisson
+```{r, include=FALSE}
+
+reschgtOPp <- NULL
+reschgtPELTp <- NULL
+
+for(i in seq)
+{
+  print(i)
+  chgt <- make_chpts(i)
+  print(chgt)
+  moys <- make_means(length(chgt))
+  data <- data_generator(n = i, chpts = chgt, means = moys, type = "poisson")
+  plot(data)
+  tOP <- system.time(myOP(data, cost = "poisson"))[3]
+  print(tOP)
+  reschgtOPp <- c(reschgtOPp, tOP)
+  tPELT <- system.time(myPELT(data, cost = "poisson"))[3]
+  print(tPELT)
+  reschgtPELTp <- c(reschgtPELTp, tPELT)
+}
+
+```
+
+```{r}
+seq
+reschgtOPp
+reschgtPELTp
+```
+
+
+
+```{r}
+n <- seq
+OP <- reschgtOPp
+PELT <- reschgtPELTp
+xyplot(OP + PELT ~ n, ylab = "Time", main = "OP vs PELT : Poisson model with changepoints", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+
+xyplot(log(OP) + log(PELT) ~ log(n), ylab = "log(Time)", main = "OP vs PELT : Poisson model with changepoints", type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("red","blue"))))
+```
+
+
+
