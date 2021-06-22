@@ -74,7 +74,9 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     L <- unique(v[,1])
     lenL <- length(L) - 1
-    
+    print("L")
+    print(L)
+
     for (i in 1:lenL)
     {
       j <- L[i]
@@ -113,7 +115,7 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
       #R2 <- (mi[t+1] - mi[j])/(t+1-j) - VR
       #R <- sqrt(R2)
       R <- (mi[t+1] - mi[j])/(t+1-j) - VR
-      #print(R)
+      print(R)
 
       q1 <- (t+1-j+1)*(delta - R)^2 + mjtp1
       theta1 <- mujt - R
@@ -171,8 +173,8 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
       l <- v[i,1]
       p <- v[i,4]
       ql <- qin(p,data,mi,beta,l,t+1)
-      #print("ql")
-      #print(ql)
+      print("ql")
+      print(ql)
 
       if ((qin(p,data,mi,beta,I,t+1) < ql) & (v[i,1] != v[i,2]))
       {
@@ -216,7 +218,7 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     #PRINT MATRIX
     #afficher matrice pour voir
-    #print(v)
+    print(v)
 
     tau[t+1] <- v[1,1]
 
@@ -229,35 +231,35 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
 
   # affichage des quadratiques
-  #for (t in 1:length(data))
-  #{
-  #  X <- v[,4]
-  #  for (i in 1:t)
-  #  {
-  #    X <- cbind(X,Qn(v[,4],data,mi,0.5,i))
-  #  }
+  for (t in 1:length(data))
+  {
+    X <- v[,4]
+    for (i in 1:t)
+    {
+      X <- cbind(X,Qn(v[,4],data,mi,0.5,i))
+    }
 
 
 
-  #  # on convertit le tableau en dataframe
-  #  X <- data.frame(X)
+    # on convertit le tableau en dataframe
+    X <- data.frame(X)
 
 
-  #  # on utilise la fonction melt pour pouvoir afficher plusieurs courbes
-  #  X.melted = melt(X, id='X')
+    # on utilise la fonction melt pour pouvoir afficher plusieurs courbes
+    X.melted = melt(X, id='X')
 
     # on affiche les courbes
-  #  p <- ggplot(data = X.melted, aes(x = X, y = value, color = variable)) +
-  #    geom_line()
-  #  print(p)
-  #}
+    p <- ggplot(data = X.melted, aes(x = X, y = value, color = variable)) +
+      geom_line()
+    print(p)
+  }
 
 
   #affichage du min des quadratiques
-  #for (i in 1:length(data))
-  #{
-  #  print(plotminQuad(v[,4],data,mi,beta,i))
-  #}
+  for (i in 1:length(data))
+  {
+    print(plotminQuad(v[,4],data,mi,beta,i))
+  }
 
   #tau => backtracking -> vérifier qu'on a ce qu'on veut.
   s <- tau[n]
