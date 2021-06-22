@@ -74,9 +74,7 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     L <- unique(v[,1])
     lenL <- length(L) - 1
-    print("L")
-    print(L)
-
+    
     for (i in 1:lenL)
     {
       j <- L[i]
@@ -218,7 +216,7 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     #PRINT MATRIX
     #afficher matrice pour voir
-    print(v)
+    #print(v)
 
     tau[t+1] <- v[1,1]
 
