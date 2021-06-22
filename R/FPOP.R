@@ -129,6 +129,64 @@ myFPOP <- function(data, beta = best_beta(data))
     #ligne 10 (tri selon les valeurs)
     v <- v[order(v[,3]),]
 
+    I <- v[1,1]
+    i <- 2
+    while (i < length(v[,1]) & v[i,3] < v[1,1] + beta)
+    {
+      l <- v[i,1]
+      p <- v[i,4]
+      ql <- qin(p,data,mi,beta,l,t)
+      print("ql")
+      print(ql)
+
+      if ((qin(p,data,mi,beta,I,t) < ql) & (v[i,1] != v[i,2]))
+      {
+        v <- v[-i,]
+      }
+
+      else
+      {
+        I <- unique(I,v[i,1],v[i,2])
+        i <- i+1
+      }
+    }
+
+    # SECOND
+
+    #    for (i in 1:length(v[1,]))
+    #    {
+    #      if (v[i,3] > v[1,3] + beta)
+    #      {
+    #        v <- v[-i,]
+    #      }
+    #    }
+
+    #=> PB: Pour un beta petit pruning enlève tout
+
+
+    # THIRD
+
+    for (i in v[,1])
+    {
+      if (v[i,1] == v[i,2])
+      {
+        if ((i %in% I) == FALSE)
+        {
+          v <- v[-i,]
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
     tau[t] <- v[1,1]
     #old version
     #mi[t] <- v[1,3]
