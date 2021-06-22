@@ -113,7 +113,7 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
       #R2 <- (mi[t+1] - mi[j])/(t+1-j) - VR
       #R <- sqrt(R2)
       R <- (mi[t+1] - mi[j])/(t+1-j) - VR
-      print(R)
+      #print(R)
 
       q1 <- (t+1-j+1)*(delta - R)^2 + mjtp1
       theta1 <- mujt - R
@@ -171,8 +171,8 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
       l <- v[i,1]
       p <- v[i,4]
       ql <- qin(p,data,mi,beta,l,t+1)
-      print("ql")
-      print(ql)
+      #print("ql")
+      #print(ql)
 
       if ((qin(p,data,mi,beta,I,t+1) < ql) & (v[i,1] != v[i,2]))
       {
