@@ -231,35 +231,35 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
 
   # affichage des quadratiques
-  for (t in 1:length(data))
-  {
-    X <- v[,4]
-    for (i in 1:t)
-    {
-      X <- cbind(X,Qn(v[,4],data,mi,0.5,i))
-    }
+  #for (t in 1:length(data))
+  #{
+  #  X <- v[,4]
+  #  for (i in 1:t)
+  #  {
+  #    X <- cbind(X,Qn(v[,4],data,mi,0.5,i))
+  #  }
 
 
 
-    # on convertit le tableau en dataframe
-    X <- data.frame(X)
+  #  # on convertit le tableau en dataframe
+  #  X <- data.frame(X)
 
 
-    # on utilise la fonction melt pour pouvoir afficher plusieurs courbes
-    X.melted = melt(X, id='X')
+  #  # on utilise la fonction melt pour pouvoir afficher plusieurs courbes
+  #  X.melted = melt(X, id='X')
 
     # on affiche les courbes
-    p <- ggplot(data = X.melted, aes(x = X, y = value, color = variable)) +
-      geom_line()
-    print(p)
-  }
+  #  p <- ggplot(data = X.melted, aes(x = X, y = value, color = variable)) +
+  #    geom_line()
+  #  print(p)
+  #}
 
 
   #affichage du min des quadratiques
-  for (i in 1:length(data))
-  {
-    print(plotminQuad(v[,4],data,mi,beta,i))
-  }
+  #for (i in 1:length(data))
+  #{
+  #  print(plotminQuad(v[,4],data,mi,beta,i))
+  #}
 
   #tau => backtracking -> vérifier qu'on a ce qu'on veut.
   s <- tau[n]
