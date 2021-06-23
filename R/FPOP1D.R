@@ -172,8 +172,8 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
       l <- v[i,1]
       p <- v[i,4]
       ql <- qin(p,data,mi,beta,l,t+1)
-      print("ql")
-      print(ql)
+      #print("ql")
+      #print(ql)
 
       if ((qin(p,data,mi,beta,I,t+1) < ql) & (v[i,1] != v[i,2]))
       {
