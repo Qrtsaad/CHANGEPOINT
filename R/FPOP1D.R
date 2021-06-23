@@ -74,8 +74,8 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     L <- unique(v[,1])
     lenL <- length(L) - 1
-    print("L")
-    print(L)
+    #print("L")
+    #print(L)
 
     for (i in 1:lenL)
     {
@@ -84,7 +84,6 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
       if(j == 1)
       {
         Vjtp1 <- csd2[t+1] - (csd[t+1])^2/(t+1)
-        #Vjt <- (csd2[t] - csd2[1]) - (csd[t] - csd[1])^2/t
         VR <- csd2[t]/t - (csd[t]/t)^2
         mujt <- (csd[t])/t
         mujtp1 <- (csd[t+1])/(t+1)
@@ -231,35 +230,34 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
 
   # affichage des quadratiques
-  for (t in 1:length(data))
-  {
-    X <- v[,4]
-    for (i in 1:t)
-    {
-      X <- cbind(X,Qn(v[,4],data,mi,0.5,i))
-    }
+  #for (t in 1:length(data))
+  #{
+  #  X <- v[,4]
+  #  for (i in 1:t)
+  #  {
+  #    X <- cbind(X,Qn(v[,4],data,mi,0.5,i))
+  #  }
 
 
 
     # on convertit le tableau en dataframe
-    X <- data.frame(X)
+  #  X <- data.frame(X)
 
 
     # on utilise la fonction melt pour pouvoir afficher plusieurs courbes
-    X.melted = melt(X, id='X')
+  #  X.melted = melt(X, id='X')
 
     # on affiche les courbes
-    p <- ggplot(data = X.melted, aes(x = X, y = value, color = variable)) +
-      geom_line()
-    print(p)
-  }
+  #  p <- ggplot(data = X.melted, aes(x = X, y = value, color = variable)) + geom_line()
+  #  print(p)
+  #}
 
 
   #affichage du min des quadratiques
-  for (i in 1:length(data))
-  {
-    print(plotminQuad(v[,4],data,mi,beta,i))
-  }
+  #for (i in 1:length(data))
+  #{
+  #  print(plotminQuad(v[,4],data,mi,beta,i))
+  #}
 
   #tau => backtracking -> vérifier qu'on a ce qu'on veut.
   s <- tau[n]
@@ -272,12 +270,10 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
   }
 
   P <- rev(P)[-1]
-
-
-  P
-
-  #P <- c(P,1) # on ajoute manuellement le premier changepoint
   P <- append(P,1,0)
+
+  #P
+  
 
   return(list(tau = tau, changepoints = P, vec = v, globalCost = mi[n+1] - length(P)*beta))
 }
