@@ -189,17 +189,17 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     # SECOND
 
-    #    for (i in 1:length(v[1,]))
-    #    {
-    #      if (v[i,3] > v[1,3] + beta)
-    #      {
-    #        v <- v[-i,]
-    #      }
-    #    }
+        for (i in 1:length(v[1,]))
+        {
+          if (v[i,3] > v[1,3] + beta)
+          {
+            v <- v[-i,]
+          }
+        }
 
     #=> PB: Pour un beta petit pruning enlève tout
 
-    v <- v[v[,3] < v[1,3] + beta,]
+    #v <- v[v[,3] < v[1,3] + beta,]
     
 
     # THIRD
