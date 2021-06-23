@@ -217,7 +217,7 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
     #PRINT MATRIX
     #afficher matrice pour voir
-    print(v)
+    #print(v)
 
     tau[t+1] <- v[1,1]
 
