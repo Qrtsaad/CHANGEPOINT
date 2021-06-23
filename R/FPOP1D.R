@@ -112,10 +112,10 @@ myFPOP1Dv2 <- function(data, beta = best_beta(data))
 
       delta <- abs(mujt - mujtp1)
 
-      #R2 <- (mi[t+1] - mi[j])/(t+1-j) - VR
-      #R <- sqrt(R2)
-      R <- (mi[t+1] - mi[j])/(t+1-j) - VR
-      print(R)
+      R2 <- (mi[t+1] - mi[j])/(t+1-j) - VR
+      R <- sqrt(abs(R2))
+      #R <- (mi[t+1] - mi[j])/(t+1-j) - VR
+      #print(R)
 
       q1 <- (t+1-j+1)*(delta - R)^2 + mjtp1
       theta1 <- mujt - R
