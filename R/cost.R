@@ -41,3 +41,26 @@ cost_poiss <- function(v)
 }
 
 
+#' Cost Negbin
+#'
+#' @description Cost function for Negbin models
+#'
+#' @param v vector of data points
+#'
+#' @return the optimal cost value
+#' @export
+#'
+#' @examples
+#' cost_negbin(c(0,1,2))
+#' cost_negbin(c(1,1,1))
+#' cost_negbin(c(1,1,1,2,2,2))
+cost_negbin <- function(v)
+{
+  n <- length(v)
+  som <- sum(v)
+  lsom  <- log(som)
+  slcb <- sum(log(choose(v+n-1,n-1)))
+
+  if (n == 1){res <- 0} else {res <- 2*(som*lsom + (n^2 + som)*log(n^2 + som) - n^2*log(n^2) - slcb)}
+  return(res)
+}

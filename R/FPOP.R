@@ -12,8 +12,15 @@
 #'
 #' @examples
 #' downupFPOP(c(rnorm(50, mean = 0, sd = 1), rnorm(50, mean = 100, sd = 1)))
-downupFPOP <- function(data, beta = best_beta(data), affiche = FALSE)
+downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = FALSE)
 {
+  allowed.cost <- c("gauss", "poisson", "negbin")
+  if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
+
+  if (cost == "gauss") {cost_f <- cost_gauss}
+  else if (cost == "poisson") {cost_f <- cost_poiss}
+  else if (cost == "negbin") {cost_f <- cost_negbin}
+
   n <- length(data)
   tau <- rep(0, n)
   tau[1] <- 1

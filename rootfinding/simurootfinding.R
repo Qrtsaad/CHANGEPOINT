@@ -3,6 +3,8 @@ devtools::install_github("Qrtsaad/CHANGEPOINT", force = TRUE)
 library(CHANGEPOINT)
 library(pracma)
 library(caret)
+library(lattice)
+library(ggplot2)
 
 ### Nombre d'itérations en fonction de la tolérance
 
@@ -81,9 +83,9 @@ matABC <- rbind(
 
 for(t in 1:nrow(matABC))
 {
-  cpNewton <- NULL
-  cpSecant <- NULL
-  cpMuller <- NULL
+  Newton <- NULL
+  Secant <- NULL
+  Muller <- NULL
 
   a <- matABC[t,1]
   b <- matABC[t,2]
@@ -91,12 +93,12 @@ for(t in 1:nrow(matABC))
 
   for(i in log10seq)
   {
-    cpNewton <- c(cpNewton, searchzero(A = a, B = b, C = c, tol = i, method = "newton")$complexity)
-    cpSecant <- c(cpSecant, searchzero(A = a, B = b, C = c, tol = i, method = "secante")$complexity)
-    cpMuller <- c(cpMuller, searchzero(A = a, B = b, C = c, tol = i, method = "muller")$complexity)
+    Newton <- c(Newton, searchzero(A = a, B = b, C = c, tol = i, method = "newton")$complexity)
+    Secant <- c(Secant, searchzero(A = a, B = b, C = c, tol = i, method = "secante")$complexity)
+    Muller <- c(Muller, searchzero(A = a, B = b, C = c, tol = i, method = "muller")$complexity)
   }
 
   mymain <- paste("Comparaison des méthodes avec ", paste("A = ", a, "B = ", b, "C = ", c), sep = ": ")
-  p <- xyplot(cpNewton + cpSecant + cpMuller ~ myseq, xlab = "tol (10^-n)", ylab = "cp", main = mymain, type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("black","red","blue"))))
+  p <- xyplot(Newton + Secant + Muller ~ myseq, xlab = "tol (10^-n)", ylab = "cp", main = mymain, type = "l", auto.key = list(points = F,lines = T), par.settings = list(superpose.line = list(col = c("black","red","blue"))))
   print(p)
 }

@@ -16,11 +16,12 @@
 #' myOP(data_generator(25, chpts = c(10,20), means = c(20,0,20), type = "gauss"), beta = 5)
 myOP <- function(data, cost = "gauss", beta = best_beta(data))
 {
-  allowed.cost <- c("gauss", "poisson")
+  allowed.cost <- c("gauss", "poisson", "negbin")
   if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
 
   if (cost == "gauss") {cost_f <- cost_gauss}
   else if (cost == "poisson") {cost_f <- cost_poiss}
+  else if (cost == "negbin") {cost_f <- cost_negbin}
 
   n <- length(data)
 
