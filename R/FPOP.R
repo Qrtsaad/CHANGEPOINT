@@ -17,9 +17,9 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
   allowed.cost <- c("gauss", "poisson", "negbin")
   if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
 
-  if (cost == "gauss") {cost_f <- cost_gauss}
-  else if (cost == "poisson") {cost_f <- cost_poiss}
-  else if (cost == "negbin") {cost_f <- cost_negbin}
+  if (cost == "gauss") {single_c <- single_gauss}
+  else if ((cost == "poisson") & (all(data > 0))) {single_c <- single_poiss}
+  else if ((cost == "negbin") & (all(data > 0))) {single_c <- single_negbin}
 
   n <- length(data)
   tau <- rep(0, n)
@@ -66,7 +66,8 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
       }
       else
       {
-        v[i,3] <- v[i,3] + (data[t+1] - v[i,4])^2
+        #v[i,3] <- v[i,3] + (data[t+1] - v[i,4])^2
+        v[i,3] <- v[i,3] + single_c(data[t+1], v[i,4])
       }
     }
 
@@ -130,11 +131,11 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
       p <- v[i,4]
 
       qI <- NULL
-      #qIbis <- NULL
       for (j in I)
       {
         Vjtp1 <- (csd2[t+2] - csd2[j])/(t+1-j+1) - (csd[t+2] - csd[j])^2/(t+1-j+1)^2
         qj <- mi[j] + beta + (t+1-j+1)*((p - (csd[t+2]-csd[j])/(t+1-j+1) )^2 + Vjtp1)
+        #modif sur qj (utilisation via fonction déja implémentée (rajouter le type du modèle pour gerer la fonction utilisée par ex))
 
         qI <- c(qI,qj)
       }

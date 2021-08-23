@@ -1,3 +1,20 @@
+single_gauss <- function(data, theta)
+{
+  return ((data - theta)^2)
+}
+
+single_poiss <- function(data, theta)
+{
+  return (theta - data*log(theta))
+}
+
+single_negbin <- function(data, theta)
+{
+  return (-data*log(theta) - log(1 - theta))
+}
+
+
+
 qin <- function(theta, data, min, beta, i, n)
 {
   #mi[i] et pas mi[i-1] car déja décalage d'index pour le vecteur mi
