@@ -6,11 +6,13 @@ single_gauss <- function(data, theta)
 single_poiss <- function(data, theta)
 {
   return (theta - data*log(theta))
+  #return (theta - data*log(theta) - log(factorial(data)))
 }
 
 single_negbin <- function(data, theta)
 {
   return (-data*log(theta) - log(1 - theta))
+  # return (data*log(theta) + (1-data)*log(1-theta))
 }
 
 

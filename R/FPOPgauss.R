@@ -1,7 +1,7 @@
-#' Functional Pruned Optimal Partitioning 1D
+#' Functional Pruned Optimal Partitioning 1D gauss
 #'
 #'
-#' @description Functional Pruned Optimal Partitioning 1D Algorithm
+#' @description Functional Pruned Optimal Partitioning 1D Algorithm for gauss cost function
 #'
 #' @param data vector of data points
 #' @param cost a number
@@ -12,16 +12,9 @@
 #'
 #' @examples
 #' downupFPOP(c(rnorm(50, mean = 0, sd = 1), rnorm(50, mean = 100, sd = 1)))
-downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = FALSE)
+downupFPOPgauss <- function(data, beta = best_beta(data), affiche = FALSE)
 {
-  allowed.cost <- c("gauss", "poisson", "negbin")
-  if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
-
-  if (cost == "gauss") {single_c <- single_gauss}
-  else if (cost == "poisson") {single_c <- single_poiss}
-  else if ((cost == "negbin") & (all(data > 0))) {single_c <- single_negbin}
-
-  sizev <- 0
+  sizev <- NULL
 
   n <- length(data)
   tau <- rep(0, n)
@@ -69,7 +62,6 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
       else
       {
         v[i,3] <- v[i,3] + (data[t+1] - v[i,4])^2
-        #v[i,3] <- v[i,3] + single_c(data[t+1], v[i,4])
       }
     }
 

@@ -1,7 +1,7 @@
-#' Functional Pruned Optimal Partitioning 1D
+#' Functional Pruned Optimal Partitioning 1D negbin
 #'
 #'
-#' @description Functional Pruned Optimal Partitioning 1D Algorithm
+#' @description Functional Pruned Optimal Partitioning 1D Algorithm for negbin cost function
 #'
 #' @param data vector of data points
 #' @param cost a number
@@ -11,17 +11,14 @@
 #' @export
 #'
 #' @examples
-#' downupFPOP(c(rnorm(50, mean = 0, sd = 1), rnorm(50, mean = 100, sd = 1)))
-downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = FALSE)
+#' downupFPOPpois(c(rpois(10, lambda = 1), rpois(10, lambda = 50)))
+downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche = FALSE)
 {
-  allowed.cost <- c("gauss", "poisson", "negbin")
-  if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
-
-  if (cost == "gauss") {single_c <- single_gauss}
-  else if (cost == "poisson") {single_c <- single_poiss}
-  else if ((cost == "negbin") & (all(data > 0))) {single_c <- single_negbin}
-
   sizev <- 0
+
+  phi <- mean(data)^2/(sd(data) - mean(data))
+  data <- data/phi
+  data[data==0] <- eps/(1-eps)
 
   n <- length(data)
   tau <- rep(0, n)
@@ -61,15 +58,14 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
       if (v[i,1] == v[i,2])
       {
         s <- v[i,1] #### CORRIGE
-        Vart <- (csd2[t+2] - csd2[s]) - (csd[t+2] - csd[s])^2 / ((t+1)-s+1)
         mut <- (csd[t+2] - csd[s]) / ((t+1)-s+1)
-        v[i,3] <- mi[s] + beta + Vart
+        v[i,3] <- mi[s] + beta + cost_negbin(data[s:t+1])
         v[i,4] <- mut
       }
       else
       {
-        v[i,3] <- v[i,3] + (data[t+1] - v[i,4])^2
-        #v[i,3] <- v[i,3] + single_c(data[t+1], v[i,4])
+        v[i,3] <- v[i,3] + data[t+1]*log(v[i,4]) + (1 - data[t+1])*log(1 - v[i,4])
+
       }
     }
 
@@ -83,40 +79,55 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
     {
       j <- indices[i]
 
-      mujt <- (csd[t+1] - csd[j])/(t-j+1)
-      mujtp1 <- (csd[t+2] - csd[j])/((t+1)-j+1)
-      delta <- abs(mujt - mujtp1)
+      A <- (t+1 - j - 1)^2
+      B <- sum(data[j:t+1])
+      C <- sum(log(choose(data[j:t+1] + n-1, n-1)))
 
-      V_itm1 <- (csd2[t+1] - csd2[j])/(t+1-j+1) - (csd[t+1] - csd[j])^2/(t+1-j+1)^2
+      myJ <- function(x) (A/C)*log(x) + (B/C)*log(1-x) + 1
+      mydJ <- function(x) A/(C*x) - B/(C*(1-x))
 
-      R2 <- (mi[t+1] - mi[j])/(t+1-j) - V_itm1 ###ALWAYS > 0
+      #if (exist_zero(A,B,C))
+      #if(myJ(A/(A+B)) >= 0)
+      #{
+        #xstar <- newton(fun = myJ, x0 = 0.2, dfun = mydJ, tol = eps)$root
+        xstar <- searchzero(A, B, C, method = "newton")
+        print(xstar)
 
-      if (R2 > 0)
-      {
-        R <- sqrt(R2)
+        if(xstar <= A/(A+B))
+        {
+          theta1 <- xstar
+          theta2 <- 1-xstar
+        }
+        else
+        {
+          theta1 <- 1-xstar
+          theta2 <- xstar
+        }
 
-        theta1 <- (csd[t+1] - csd[j])/(t-j+1) - R
-        theta2 <- (csd[t+1] - csd[j])/(t-j+1) + R
+        m_ti <- mi[j] + beta
 
-        m_ti <- mi[j] + beta + (csd2[t+2] - csd2[j] - (csd[t+2] - csd[j])^2 / (t+1-j+1))
+        sgamma1 <- sum(data[j:t+1]*log(theta1) + (1-data[j:t+1])*log(1-theta1))
+        sgamma2 <- sum(data[j:t+1]*log(theta2) + (1-data[j:t+1])*log(1-theta2))
 
-        q1 <- (t+1-j+1)*(delta - R)^2 + m_ti
-        q2 <- (t+1-j+1)*(delta + R)^2 + m_ti
+        q1 <- m_ti + sgamma1
+        q2 <- m_ti + sgamma2
 
         v <- rbind(v, c(j, t+1, q1, theta1))
         v <- rbind(v, c(t+1, j, q2, theta2))
-      }
+
+      #}
+
     }
 
 
 
     #####
-    # STEP 5 : SORT BY VALUES
+    # STEP 4 : SORT BY VALUES
     #####
     v <- v[order(v[,3]),]
 
     #####
-    # STEP 6 : PRUNING
+    # STEP 5 : PRUNING
     #####
 
     # SECOND :
@@ -135,15 +146,11 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
       qI <- NULL
       for (j in I)
       {
-        Vjtp1 <- (csd2[t+2] - csd2[j])/(t+1-j+1) - (csd[t+2] - csd[j])^2/(t+1-j+1)^2
-        qj <- mi[j] + beta + (t+1-j+1)*((p - (csd[t+2]-csd[j])/(t+1-j+1) )^2 + Vjtp1)
-        #modif sur qj (utilisation via fonction déja implémentée (rajouter le type du modèle pour gerer la fonction utilisée par ex))
-
+        qj <- mi[j] + beta + sum(data[j:t+1]*log(p) + (1 - data[j:t+1])*log(1 - p))
         qI <- c(qI,qj)
       }
 
-      Vltp1 <- (csd2[t+2] - csd2[l])/(t+1-l+1) - (csd[t+2] - csd[l])^2/(t+1-l+1)^2
-      ql <- mi[l] + beta + (t+1-l+1)*((p - (csd[t+2]-csd[l])/(t+1-l+1) )^2 + Vltp1)
+      ql <- mi[l] + beta + sum(data[l:t+1]*log(p) + (1 - data[l:t+1])*log(1 - p))
 
       if((is.element('TRUE',qI < ql) == TRUE) & (v[i,1]!=v[i,2]))
       {
@@ -179,7 +186,6 @@ downupFPOP <- function(data, cost = "gauss", beta = best_beta(data), affiche = F
     }
 
     sizev <- c(sizev, nrow(v))
-
   }
 
 

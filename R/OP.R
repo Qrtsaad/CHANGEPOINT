@@ -14,14 +14,20 @@
 #' myOP(c(0,0,1,1,0,0,0), beta = 0.00001)
 #' myOP(c(rnorm(50, mean = 0, sd = 0), rnorm(50, mean = 10, sd = 0)))
 #' myOP(data_generator(25, chpts = c(10,20), means = c(20,0,20), type = "gauss"), beta = 5)
-myOP <- function(data, cost = "gauss", beta = best_beta(data))
+myOP <- function(data, cost = "gauss", beta = best_beta(data), eps = 1e-6)
 {
   allowed.cost <- c("gauss", "poisson", "negbin")
   if(!cost %in% allowed.cost){stop('type must be one of: ', paste(allowed.cost, collapse=", "))}
 
   if (cost == "gauss") {cost_f <- cost_gauss}
   else if (cost == "poisson") {cost_f <- cost_poiss}
-  else if (cost == "negbin") {cost_f <- cost_negbin}
+  else if (cost == "negbin")
+  {
+    phi <- mean(data)^2/(sd(data) - mean(data))
+    data <- data/phi
+    data[data==0] <- eps/(1-eps)
+    cost_f <- cost_negbin
+  }
 
   n <- length(data)
 
@@ -56,6 +62,6 @@ myOP <- function(data, cost = "gauss", beta = best_beta(data))
   }
   P <- rev(P)[-1]
 
-  return(list(changepoints = P, means = NULL, globalCost = Q[n] - length(P)*beta))
+  return(list(changepoints = P, globalCost = Q[n] - length(P)*beta))
 }
 
