@@ -11,14 +11,26 @@
 #' @export
 #'
 #' @examples
-#' downupFPOPpois(c(rpois(10, lambda = 1), rpois(10, lambda = 50)))
-downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche = FALSE)
+#' downupFPOPnegbin(c(rnbinom(n = 20, size = 5, prob = 0.25), rnbinom(n = 20, size = 10, prob = 0.9)))
+downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, tol = 1e-4, maxiter = 5, affiche = FALSE)
 {
+
+  myJ <- function(x,A,B,C)
+  {
+    return ((A/C)*log(x) + (B/C)*log(1-x) + 1)
+  }
+
+  mydJ <- function(x,A,B,C)
+  {
+    return (A/(C*x) - B/(C*(1-x)))
+  }
+
   sizev <- 0
 
   phi <- mean(data)^2/(sd(data) - mean(data))
   data <- data/phi
   data[data==0] <- eps/(1-eps)
+
 
   n <- length(data)
   tau <- rep(0, n)
@@ -53,7 +65,7 @@ downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche =
     #####
     # STEP 2 UPDATE POINTS (values)
     #####
-    for (i in 1:(nrow(v)-1)) ### CORRIGE (enlever le dernier ajouté à l'instant)
+    for (i in 1:(nrow(v)-1))
     {
       if (v[i,1] == v[i,2])
       {
@@ -72,7 +84,7 @@ downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche =
     #####
     # STEP 3 : NEW INTERSECTIONS
     #####
-    indices <- unique(v[,1]) #### indices = indices des quadratiques présentes
+    indices <- unique(v[,1])
     nb_old_indices <- length(indices) - 1
 
     for (i in 1:nb_old_indices) #new index = t+1
@@ -83,41 +95,65 @@ downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche =
       B <- sum(data[j:t+1])
       C <- sum(log(choose(data[j:t+1] + n-1, n-1)))
 
-      myJ <- function(x) (A/C)*log(x) + (B/C)*log(1-x) + 1
-      mydJ <- function(x) A/(C*x) - B/(C*(1-x))
 
-      #if (exist_zero(A,B,C))
+
       #if(myJ(A/(A+B)) >= 0)
       #{
-        #xstar <- newton(fun = myJ, x0 = 0.2, dfun = mydJ, tol = eps)$root
-        xstar <- searchzero(A, B, C, method = "newton")
-        print(xstar)
+      #xstar <- newton(fun = myJ, x0 = 0.2, dfun = mydJ, tol = eps)$root
+      #xstar <- searchzero(A, B, C, method = "newton")
+      #print(xstar)
 
-        if(xstar <= A/(A+B))
+      #print(A)
+      #print(B)
+      #print(C)
+      #print(A/(A+B))
+      #print(myJ(A/(A+B),A,B,C))
+
+      if(is.nan(myJ(A/(A+B),A,B,C)) == FALSE)
+      {
+        if(myJ(A/(A+B),A,B,C) > 0)
         {
-          theta1 <- xstar
-          theta2 <- 1-xstar
+          x <- 0.5
+          N <- 0
+          while ((abs(myJ(x,A,B,C)) > tol) & (N < maxiter))
+          {
+            x <- x - myJ(x,A,B,C)/mydJ(x,A,B,C)
+            #print(x)
+            if(x<0)
+            {x <- exp(x)}
+            #print(x)
+            if(x>=1)
+            {x <- log(x)}
+            #print(x)
+            x <- x/phi
+            N <- N+1
+          }
+
+          if(x <= A/(A+B))
+          {
+            theta1 <- x
+            theta2 <- 1-x
+          }
+          else
+          {
+            theta1 <- 1-x
+            theta2 <- x
+          }
+
+          m_ti <- mi[j] + beta
+
+          sgamma1 <- sum(data[j:t+1]*log(theta1) + (1-data[j:t+1])*log(1-theta1))
+          sgamma2 <- sum(data[j:t+1]*log(theta2) + (1-data[j:t+1])*log(1-theta2))
+
+          q1 <- m_ti + sgamma1
+          q2 <- m_ti + sgamma2
+
+          v <- rbind(v, c(j, t+1, q1, theta1))
+          v <- rbind(v, c(t+1, j, q2, theta2))
         }
-        else
-        {
-          theta1 <- 1-xstar
-          theta2 <- xstar
-        }
-
-        m_ti <- mi[j] + beta
-
-        sgamma1 <- sum(data[j:t+1]*log(theta1) + (1-data[j:t+1])*log(1-theta1))
-        sgamma2 <- sum(data[j:t+1]*log(theta2) + (1-data[j:t+1])*log(1-theta2))
-
-        q1 <- m_ti + sgamma1
-        q2 <- m_ti + sgamma2
-
-        v <- rbind(v, c(j, t+1, q1, theta1))
-        v <- rbind(v, c(t+1, j, q2, theta2))
-
-      #}
-
+      }
     }
+
 
 
 
@@ -126,16 +162,16 @@ downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche =
     #####
     v <- v[order(v[,3]),]
 
+
     #####
     # STEP 5 : PRUNING
     #####
 
     # SECOND :
+    #v <- v[v[,3] < v[1,3] + beta,]
 
-    v <- v[v[,3] < v[1,3] + beta,]
 
     # FIRST :
-
     I <- v[1,1]
     i <- 2
     while(i<nrow(v))
@@ -166,8 +202,6 @@ downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche =
 
 
     # THIRD :
-
-
     lab <- v[v[,1] == v[,2],]
     lab <- lab[is.element(lab[,1],I),] #on garde que les lignes du type l,l,v,p avec l \in I
     inter <- v[v[,1] != v[,2],] #partie de v avec les lignes du type l,l',v,p
@@ -175,17 +209,15 @@ downupFPOPnegbin <- function(data, beta = best_beta(data), eps = 1e-6, affiche =
     rownames(v) <- NULL
 
 
-    mi[t+2] <- v[1,3]
-    #min <- min(v[,3])
-    #print(min)
-    tau[t+1] <- v[1,1]
 
-    if (affiche == TRUE) # pour vérifier les valeurs à chaque itération d'un test simple
+    mi[t+2] <- v[1,3]
+    tau[t+1] <- v[1,1]
+    sizev <- c(sizev, nrow(v))
+
+    if (affiche == TRUE)
     {
       print(v)
     }
-
-    sizev <- c(sizev, nrow(v))
   }
 
 

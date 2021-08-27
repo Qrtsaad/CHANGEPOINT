@@ -77,7 +77,7 @@ downupFPOPpois <- function(data, beta = best_beta(data), affiche = FALSE)
 
       A <- -(t+1 - j - 1)
       B <- sum(data[j:t+1])
-      C <- -sum(log(fact(data[j:t+1])))
+      C <- -sum(log(factorial(data[j:t+1])))
       delta <- (B/A)*exp(-C/A)
       m_ti <- mi[j] + beta
 
