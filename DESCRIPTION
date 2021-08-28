@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Saâd Qriouet
 Maintainer: Saâd Qriouet <qriouetsaad@gmail.com>
 Description: Implementation of differents method for changepoint detection. 
-    Methods implemented : OP and PELT.
+    Methods implemented : OP, PELT and a new version of FPOP called downupFPOP.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
